@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+<title>Happy Anniversary </title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    background: radial-gradient(ellipse at 20% 10%, #0b1630 0%, #02040a 50%, #000004 100%);
+    color:#fff; overflow:hidden;
+    -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    -webkit-touch-callout:none; -webkit-user-select:none; user-select:none;
+  }
+
+  .stage{position:relative;width:100%;height:100vh;display:flex;align-items:center;justify-content:center}
+
+  #stars{position:absolute;inset:0;z-index:3;pointer-events:none}
+  #glitter{position:absolute;inset:0;z-index:7;pointer-events:none}
+  .moon{position:absolute;top:5vh;right:6vw;z-index:5;width:84px;height:84px;border-radius:50%;
+    background:radial-gradient(circle at 28% 22%,#fff 0%,#f4f7ff 12%,#c8daf8 48%,#96acd6 100%);
+    box-shadow:0 0 40px rgba(180,200,255,0.18); opacity:.98}
+  .moon::after{content:"";position:absolute;inset:-20px;border-radius:50%;
+    background:radial-gradient(circle,#ffffff33 0%,transparent 60%);filter:blur(16px)}
+  .night-overlay{position:absolute;inset:0;z-index:2;
+    background:linear-gradient(180deg, rgba(0,0,10,0.15), rgba(1,3,12,0.65))}
+
+  .content{
+    position:relative; z-index:8; width:100%; max-width:460px; height:100%;
+    margin:0 auto; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; padding-top:6vh;
+  }
+
+  .countdown{
+    position:relative; z-index:20; font-weight:900; font-size:clamp(48px,14vw,140px);
+    line-height:1; color:#fff; letter-spacing:3px; text-align:center;
+    transition:transform .28s ease,opacity .5s ease;
+  }
+
+  .celebrate{
+    position:absolute; left:0; right:0; top:20vh; z-index:20; text-align:center;
+    opacity:0; transform:translateY(12px) scale(.98);
+    transition:opacity .55s ease, transform .6s cubic-bezier(.16,1,.3,1);
+    display:none;
+  }
+  .celebrate.show{ opacity:1; transform:translateY(0) scale(1) }
+  .celebrate .line1{
+    font-weight:900; letter-spacing:1.5px;
+    font-size:clamp(42px,16vw,96px); line-height:1.02;
+    background:linear-gradient(90deg,#ffd1e6,#ffd9b8,#ffe9a3);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    text-shadow:0 0 22px rgba(255,220,240,0.35), 0 0 44px rgba(255,230,180,0.22);
+  }
+  .celebrate .line2{
+    font-weight:900; letter-spacing:1.8px;
+    font-size:clamp(38px,13.5vw,86px); line-height:1.02;
+    background:linear-gradient(90deg,#ffe9a3,#ffd9b8,#ffd1e6);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    text-shadow:0 0 22px rgba(255,230,200,0.35), 0 0 44px rgba(255,210,210,0.22);
+    margin-top:2px;
+  }
+
+  .slideshow{
+    position:relative; width:92%; height:68vh; border-radius:20px; overflow:hidden; margin-top:3vh;
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.08)); box-shadow:0 12px 50px rgba(0,0,0,0.6);
+    opacity:0; pointer-events:none; transition:opacity .45s ease;
+  }
+  .slideshow.show-ui{ opacity:1; pointer-events:auto }
+
+  .slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;transition:opacity 1s cubic-bezier(.2,.9,.2,1);opacity:0}
+  .slide img{width:100%;height:100%;object-fit:cover}
+  .slide.show{opacity:1}
+
+  .overlay{
+    position:absolute; left:12px; right:12px; bottom:22px; padding:14px; border-radius:12px;
+    background:linear-gradient(180deg, rgba(0,0,0,0.18), rgba(0,0,0,0.42)); backdrop-filter: blur(6px); box-shadow:0 6px 24px rgba(0,0,0,0.5)
+  }
+  .quote{font-size:clamp(14px,3.6vw,18px); text-align:center; color:#ffdfe9; font-weight:600}
+  .author{font-size:12px; text-align:center; color:#dfe7f2; margin-top:8px; opacity:.85}
+
+  .controls{
+    position:relative; z-index:9; display:flex; gap:10px; align-items:center; margin:12px auto 0; justify-content:center;
+    opacity:0; pointer-events:none; transition:opacity .45s ease;
+  }
+  .controls.show-ui{ opacity:1; pointer-events:auto }
+
+  .btn{background:rgba(255,255,255,0.06); border:0; padding:8px 12px; border-radius:10px; color:#fff; font-weight:600; backdrop-filter:blur(6px); cursor:pointer}
+
+  .dots{position:absolute; left:50%; transform:translateX(-50%); bottom:12px; display:flex; gap:8px; z-index:9}
+  .dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.22)}
+  .dot.active{background:linear-gradient(90deg,#ffd1e6,#ffd9b8); box-shadow:0 6px 18px rgba(255,160,200,0.08)}
+
+  .kick{position:fixed; inset:0; z-index:30; background:transparent; display:none}
+  .kick.show{display:block}
+</style>
+</head>
+<body>
+  <div class="stage" id="app">
+    <canvas id="stars"></canvas>
+    <div class="moon" aria-hidden="true"></div>
+    <div class="night-overlay"></div>
+    <canvas id="glitter"></canvas>
+
+    <div class="content">
+      <div id="countdown" class="countdown">5</div>
+
+      <div id="celebrate" class="celebrate" aria-live="polite">
+        <div class="line1">Happy</div>
+        <div class="line2">Anniversary</div>
+      </div>
+
+      <div id="slideshow" class="slideshow" aria-live="polite">
+        <div class="slide" data-i="0"><!-- absolute GitHub RAW URLs -->
+          <img src="https://raw.githubusercontent.com/shivamsharmaofficial/anniversary-slideshow/main/material/1.jpg" alt="slide 1">
+          <div class="overlay"><div class="quote" id="q0"></div><div class="author" id="a0"></div></div>
+        </div>
+        <div class="slide" data-i="1">
+          <img src="https://raw.githubusercontent.com/shivamsharmaofficial/anniversary-slideshow/main/material/2.jpg" alt="slide 2">
+          <div class="overlay"><div class="quote" id="q1"></div><div class="author" id="a1"></div></div>
+        </div>
+        <div class="slide" data-i="2">
+          <img src="https://raw.githubusercontent.com/shivamsharmaofficial/anniversary-slideshow/main/material/5.jpg" alt="slide 5">
+          <div class="overlay"><div class="quote" id="q2"></div><div class="author" id="a2"></div></div>
+        </div>
+        <div class="slide" data-i="3">
+          <img src="https://raw.githubusercontent.com/shivamsharmaofficial/anniversary-slideshow/main/material/3.jpg" alt="slide 3">
+          <div class="overlay"><div class="quote" id="q3"></div><div class="author" id="a3"></div></div>
+        </div>
+        <div class="slide" data-i="4">
+          <img src="https://raw.githubusercontent.com/shivamsharmaofficial/anniversary-slideshow/main/material/4.jpg" alt="slide 4">
+          <div class="overlay"><div class="quote" id="q4"></div><div class="author" id="a4"></div></div>
+        </div>
+        <div class="dots" id="dots"></div>
+      </div>
+
+      <div class="controls" id="controls">
+        <button id="muteBtn" class="btn">Mute</button>
+        <button id="replayBtn" class="btn">Replay Intro</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="kick" class="kick" aria-hidden="true"></div>
+
+  <audio id="music" preload="auto" playsinline>
+    <source src="https://raw.githubusercontent.com/shivamsharmaofficial/anniversary-slideshow/main/material/song.mp3" type="audio/mpeg">
+  </audio>
+
+<script>
+/* ===== Config ===== */
+const SLIDE_DURATION = 5000;
+const COUNTDOWN_START = 5;
+const TITLE_HOLD_MS = 1400;
+
+/* ===== Music mix (Web Audio) ===== */
+const FADE_IN_MS = 1800;
+const FADE_TOGGLE_MS = 300;
+let audioCtx, gainNode, isMuted = false;
+
+function setupAudioGraph(){
+  if (audioCtx) return;
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const src = audioCtx.createMediaElementSource(music);
+  gainNode = audioCtx.createGain();
+  gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+  src.connect(gainNode).connect(audioCtx.destination);
+}
+function fadeTo(target = 1, ms = 300){
+  if (!audioCtx || !gainNode) return;
+  const now = audioCtx.currentTime;
+  const start = gainNode.gain.value;
+  gainNode.gain.cancelScheduledValues(now);
+  gainNode.gain.setValueAtTime(start, now);
+  gainNode.gain.linearRampToValueAtTime(target, now + Math.max(0.01, ms/1000));
+}
+
+/* ===== Quotes ===== */
+const quotes = [
+  {text: "Two hearts, one journey — your bond inspires us every day.", author: "— With Love"},
+  {text: "May your laughter grow louder and your love deepen forever.", author: "— Always Blessings"},
+  {text: "A true partnership is built on trust, respect, and love — just like yours.", author: "— Family Wishes"},
+  {text: "Seeing you both together reminds us how beautiful marriage can be.", author: "— From All of Us"},
+  {text: "May your story continue shining brighter with every passing year.", author: "— Blessings & Love"}
+];
+
+/* ===== Elements ===== */
+const countdownEl = document.getElementById('countdown');
+const celebrateEl = document.getElementById('celebrate');
+const slideshow = document.getElementById('slideshow');
+const controls = document.getElementById('controls');
+const slides = Array.from(document.querySelectorAll('.slide'));
+const dotsWrap = document.getElementById('dots');
+const music = document.getElementById('music');
+const muteBtn = document.getElementById('muteBtn');
+const replayBtn = document.getElementById('replayBtn');
+const kick = document.getElementById('kick');
+
+/* ===== State ===== */
+let current = 0, slideTimer = null;
+
+/* ===== Setup Text & Dots ===== */
+quotes.forEach((q,i)=>{
+  const qEl = document.getElementById('q'+i);
+  const aEl = document.getElementById('a'+i);
+  if(qEl) qEl.textContent = q.text;
+  if(aEl) aEl.textContent = q.author;
+});
+slides.forEach((_,i)=>{
+  const d = document.createElement('div'); d.className='dot'; d.dataset.i=i; dotsWrap.appendChild(d);
+});
+const dots = Array.from(document.querySelectorAll('.dot'));
+
+/* ===== Slideshow ===== */
+function showSlide(i){
+  slides.forEach(s=>s.classList.remove('show'));
+  dots.forEach(d=>d.classList.remove('active'));
+  slides[i].classList.add('show');
+  dots[i].classList.add('active');
+  current = i;
+}
+function nextSlide(){ showSlide((current+1)%slides.length); }
+function startSlides(){
+  clearInterval(slideTimer);
+  showSlide(current);
+  slideTimer = setInterval(nextSlide, SLIDE_DURATION);
+  slideshow.classList.add('show-ui');
+  controls.classList.add('show-ui');
+}
+function stopSlides(){ clearInterval(slideTimer); slideTimer = null; }
+
+/* ===== Music: start ON at page open; mute just fades ===== */
+function refreshMuteLabel(){ muteBtn.textContent = isMuted ? 'Unmute' : 'Mute'; }
+
+function startMusicOnLoad(){
+  setupAudioGraph();
+  music.muted = false;
+  const tryPlay = () => audioCtx.resume().then(()=> music.play());
+
+  tryPlay().then(()=>{
+    fadeTo(1, FADE_IN_MS);
+    isMuted = false;
+    refreshMuteLabel();
+  }).catch(()=>{
+    kick.classList.add('show');
+    const kickPlay = (e)=>{
+      if (e.target.closest('#controls')) return;
+      setupAudioGraph();
+      audioCtx.resume().then(()=> music.play()).then(()=>{
+        fadeTo(1, FADE_IN_MS);
+        isMuted = false;
+        refreshMuteLabel();
+      }).finally(()=>{
+        kick.classList.remove('show');
+        window.removeEventListener('pointerdown', kickPlay, true);
+        window.removeEventListener('touchstart', kickPlay, true);
+        window.removeEventListener('click', kickPlay, true);
+      });
+    };
+    window.addEventListener('pointerdown', kickPlay, true);
+    window.addEventListener('touchstart', kickPlay, true);
+    window.addEventListener('click', kickPlay, true);
+  });
+}
+
+muteBtn.addEventListener('click', (e)=>{
+  e.stopPropagation();
+  if (!audioCtx) setupAudioGraph();
+  if (isMuted){ fadeTo(1, FADE_TOGGLE_MS); isMuted = false; }
+  else { fadeTo(0, FADE_TOGGLE_MS); isMuted = true; }
+  refreshMuteLabel();
+});
+
+document.addEventListener('visibilitychange', ()=>{
+  if (!document.hidden){
+    if (!audioCtx) setupAudioGraph();
+    audioCtx.resume().then(()=> music.play().catch(()=>{}));
+  }
+});
+
+/* ===== Countdown → Title → Slideshow ===== */
+function runCountdown(){
+  let n = COUNTDOWN_START;
+  countdownEl.textContent = n;
+  countdownEl.style.opacity = 1;
+
+  const t = setInterval(()=>{
+    n--;
+    if(n > 0){
+      countdownEl.style.transform = "scale(1.08)";
+      setTimeout(()=> countdownEl.style.transform = "scale(1)", 180);
+      countdownEl.textContent = n;
+    } else {
+      clearInterval(t);
+      countdownEl.style.opacity = 0;
+
+      setTimeout(()=>{
+        celebrateEl.style.display = 'block';
+        requestAnimationFrame(()=> celebrateEl.classList.add('show'));
+        setTimeout(()=>{
+          celebrateEl.classList.remove('show');
+          setTimeout(()=>{
+            celebrateEl.style.display = 'none';
+            current = 0;
+            startSlides();
+          }, 350);
+        }, TITLE_HOLD_MS);
+      }, 120);
+    }
+  }, 1000);
+}
+
+/* ===== Stars ===== */
+(function(){
+  const c = document.getElementById('stars'); const ctx = c.getContext('2d');
+  function resize(){ c.width = innerWidth; c.height = innerHeight; }
+  resize(); addEventListener('resize', resize);
+  const count = Math.floor((innerWidth*innerHeight)/9000);
+  const stars = Array.from({length:count}, ()=>({
+    x:Math.random()*c.width, y:Math.random()*c.height*0.7,
+    r:Math.random()*1.6+0.2, a:Math.random()*0.9+0.1, tw:Math.random()*0.02+0.004
+  }));
+  (function draw(){
+    ctx.clearRect(0,0,c.width,c.height);
+    for(const s of stars){
+      s.a += s.tw; if(s.a<=0.08||s.a>=1) s.tw*=-1;
+      ctx.globalAlpha = s.a; ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      ctx.fillStyle='#fff'; ctx.fill();
+    }
+    requestAnimationFrame(draw);
+  })();
+})();
+
+/* ===== Glitter ===== */
+(function(){
+  const c = document.getElementById('glitter'); const ctx = c.getContext('2d');
+  let parts=[]; function resize(){ c.width=innerWidth; c.height=innerHeight; }
+  resize(); addEventListener('resize', resize);
+  function emit(x,y,n=20){ for(let i=0;i<n;i++){ parts.push({x,y,vx:(Math.random()-0.5)*4,vy:(Math.random()-1.2)*5-1,life:Math.random()*70+40,r:Math.random()*2.2+0.6}) } }
+  setInterval(()=>{ emit(innerWidth/2 + (Math.random()-0.5)*180, innerHeight/2 + (Math.random()-0.5)*110, 12); }, 800);
+  (function tick(){
+    ctx.clearRect(0,0,c.width,c.height);
+    for(let i=parts.length-1;i>=0;i--){
+      const p=parts[i]; p.x+=p.vx; p.y+=p.vy; p.vy+=0.08; p.life--;
+      ctx.globalAlpha=Math.max(0,p.life/100);
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle='rgba(255,245,220,1)'; ctx.fill();
+      if(p.life<=0) parts.splice(i,1);
+    }
+    requestAnimationFrame(tick);
+  })();
+})();
+
+/* ===== Swipe ===== */
+(function(){
+  const wrap = document.getElementById('slideshow'); let startX=0, dist=0, threshold=60;
+  wrap.addEventListener('touchstart', e=>{ startX = e.changedTouches[0].clientX; });
+  wrap.addEventListener('touchend', e=>{
+    dist = e.changedTouches[0].clientX - startX;
+    if(Math.abs(dist) > threshold){
+      current = dist<0 ? (current+1)%slides.length : (current-1+slides.length)%slides.length;
+      startSlides();
+    }
+  });
+})();
+
+/* ===== Placeholder (kept) ===== */
+function placeholderData(label){
+  const svg = encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='800' height='1200'>
+<defs><linearGradient id='g' x1='0' y='0' x2='0' y2='1'><stop offset='0%' stop-color='#141828'/><stop offset='100%' stop-color='#0a0d18'/></linearGradient></defs>
+<rect width='100%' height='100%' fill='url(#g)'/>
+<text x='50%' y='50%' fill='#9fb3ff' font-family='Arial, Helvetica, sans-serif' font-size='48' text-anchor='middle'>${label}</text>
+<text x='50%' y='58%' fill='#c7d2fe' font-family='Arial, Helvetica, sans-serif' font-size='28' text-anchor='middle'>Add your photo</text>
+</svg>`);
+  return `data:image/svg+xml;charset=utf-8,${svg}`;
+}
+slides.forEach((s,idx)=>{
+  const im = s.querySelector('img');
+  if(im){ im.addEventListener('error', ()=>{ im.src = placeholderData(`Slide ${idx+1}`); }); }
+});
+
+/* ===== Boot ===== */
+document.addEventListener('DOMContentLoaded', ()=>{
+  startMusicOnLoad();
+  runCountdown();
+  refreshMuteLabel();
+});
+
+/* ===== Replay ===== */
+replayBtn.addEventListener('click', ()=>{
+  stopSlides();
+  slideshow.classList.remove('show-ui');
+  controls.classList.remove('show-ui');
+  slides.forEach(s=>s.classList.remove('show'));
+  dots.forEach(d=>d.classList.remove('active'));
+  celebrateEl.classList.remove('show');
+  celebrateEl.style.display = 'none';
+  countdownEl.style.opacity = 1; countdownEl.style.transform='scale(1)';
+  runCountdown();
+});
+</script>
+</body>
+</html>
